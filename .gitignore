@@ -1,0 +1,53 @@
+# python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# dependencies
+**/node_modules
+# roadhog-api-doc ignore
+/src/utils/request-temp.js
+_roadhog-api-doc
+var/log/*
+
+# production
+coverage
+/dist
+.idea
+yarn.lock
+package-lock.json
+*bak
+.vscode
+
+# misc
+.DS_Store
+npm-debug.log*
+yarn-error.log
+
+# visual studio code
+.history
+*.log
+functions/*
+.temp/**
+
+# umi
+.umi
+.umi-production
+
+# screenshot
+screenshot
+.firebase
+.eslintcache
+
+build
+
+# golang
+vendor
+
+# ent
+**/repository/*
+!**/repository/repository.go
+!**/repository/schema
+
+# proj
+etc
