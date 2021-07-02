@@ -7,13 +7,12 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/windrivder/gopkg/typex"
 )
 
 // Context is the context of the JSON web token.
 type Context struct {
-	ID    string            `json:"id"`
-	Value typex.GenericType `json:"value,omitempty"`
+	ID    string      `json:"id"`
+	Value interface{} `json:"value,omitempty"`
 }
 
 // secretFunc validates the secret format.
@@ -44,7 +43,7 @@ func Parse(secret, tokenString string) (*Context, error) {
 	} else if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		ctx.ID = claims["id"].(string)
 		if m, ok := claims["value"]; ok {
-			ctx.Value = m.(typex.GenericType)
+			ctx.Value = m.(interface{})
 		}
 		return ctx, nil
 

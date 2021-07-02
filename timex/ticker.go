@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/windrivder/gopkg/typex"
+	"github.com/windrivder/gopkg/container/typex"
 )
 
 type (

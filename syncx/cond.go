@@ -3,8 +3,8 @@ package syncx
 import (
 	"time"
 
+	"github.com/windrivder/gopkg/container/typex"
 	"github.com/windrivder/gopkg/timex"
-	"github.com/windrivder/gopkg/typex"
 )
 
 // A Cond is used to wait for conditions.
