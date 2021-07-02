@@ -35,12 +35,12 @@ type Logger interface {
 
 // Options is log configuration struct
 type Options struct {
-	Level      string `json:"level"`
-	File       string `json:"file"`
-	MaxSize    int    `json:"max_size"` // MB
-	MaxAge     int    `json:"max_age"`  // Day
-	MaxBackups int    `json:"max_backups"`
-	Compress   bool   `json:"compress"`
+	Level      string `json:"Level"`
+	File       string `json:"File"`
+	MaxSize    int    `json:"MaxSize"` // MB
+	MaxAge     int    `json:"MaxAge"`  // Day
+	MaxBackups int    `json:"MaxBackups"`
+	Compress   bool   `json:"Compress"`
 }
 
 func NewOptions(v *viper.Viper) (o Options, err error) {
