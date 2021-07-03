@@ -9,7 +9,14 @@ import (
 
 // The SkipperFunc signature, used to serve the main request without logs.
 // See `Configuration` too.
-type SkipperFunc = middleware.Skipper
+type (
+	SkipperFunc = middleware.Skipper
+)
+
+// DefaultSkipper returns false which processes the middleware.
+var (
+	DefaultSkipper = middleware.DefaultSkipper
+)
 
 // SkipHandler 统一处理跳过函数
 func SkipHandler(ctx echo.Context, skippers ...SkipperFunc) bool {
