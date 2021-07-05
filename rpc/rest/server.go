@@ -15,20 +15,20 @@ import (
 )
 
 type Options struct {
-	Name            string        `json:"name"`
-	Mode            string        `json:"mode"`
-	Host            string        `json:"host"`
-	Port            int           `json:"port"`
-	CertFile        string        `json:"cert_file"`
-	KeyFile         string        `json:"key_file"`
-	ShutdownTimeout time.Duration `json:"shutdown_timeout"`
-	ClientTimeout   time.Duration `json:"client_timeout"`
-	Secret          string        `json:"secret"`
-	Expired         time.Duration `json:"expired"`
+	Name            string        `json:"Name"`
+	Mode            string        `json:"Mode"`
+	Host            string        `json:"Host"`
+	Port            int           `json:"Port"`
+	CertFile        string        `json:"CertFile"`
+	KeyFile         string        `json:"KeyFile"`
+	ShutdownTimeout time.Duration `json:"ShutdownTimeout"`
+	ClientTimeout   time.Duration `json:"ClientTimeout"`
+	Secret          string        `json:"Secret"`
+	Expired         time.Duration `json:"Expired"`
 }
 
 func NewOptions(v *viper.Viper) (o Options, err error) {
-	if err = v.UnmarshalKey("rest", &o); err != nil {
+	if err = v.UnmarshalKey("Rest", &o); err != nil {
 		return o, errorx.Wrap(err, "unmarshal rest option error")
 	}
 
@@ -59,6 +59,8 @@ func (s *Server) Start() (err error) {
 	s.log.WithFields(logx.Fields{"addr": addr}).Info("http server starting...")
 
 	go func() {
+		s.Echo.Server.Addr = addr
+
 		if s.o.CertFile == "" && s.o.KeyFile == "" {
 			err = s.Echo.Server.ListenAndServe()
 		} else {

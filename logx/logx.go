@@ -44,7 +44,7 @@ type Options struct {
 }
 
 func NewOptions(v *viper.Viper) (o Options, err error) {
-	if err = v.UnmarshalKey("log", &o); err != nil {
+	if err = v.UnmarshalKey("Log", &o); err != nil {
 		return o, errorx.Wrap(err, "unmarshal log option error")
 	}
 

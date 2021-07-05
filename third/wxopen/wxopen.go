@@ -16,7 +16,7 @@ type Options struct {
 }
 
 func NewOptions(v *viper.Viper) (o Options, err error) {
-	if err = v.UnmarshalKey("wxopen", &o); err != nil {
+	if err = v.UnmarshalKey("Wxopen", &o); err != nil {
 		return o, errorx.Wrap(err, "unmarshal wxopen option error")
 	}
 

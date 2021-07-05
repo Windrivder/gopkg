@@ -15,18 +15,18 @@ import (
 )
 
 type Options struct {
-	AppId               string        `json:"appid"`
-	MchId               string        `json:"mchid"`                  // 商户 id
-	ApiKey              string        `json:"api_key"`                // 商户 api key
-	MchCertSerialNumber string        `json:"mch_cert_serial_number"` // 商户证书序列号
-	PrivateKeyPath      string        `json:"private_key_path"`       // 商户私钥文件路径
-	WechatCertPath      string        `json:"wechat_cert_path"`
-	WechatCertSerialNo  string        `json:"wechat_cert_serial_no"`
-	Timeout             time.Duration `json:"timeout"`
+	AppId               string        `json:"Appid"`
+	MchId               string        `json:"Mchid"`               // 商户 id
+	ApiKey              string        `json:"ApiKey"`              // 商户 api key
+	MchCertSerialNumber string        `json:"MchCertSerialNumber"` // 商户证书序列号
+	PrivateKeyPath      string        `json:"PrivateKeyPath"`      // 商户私钥文件路径
+	WechatCertPath      string        `json:"WechatCertPath"`
+	WechatCertSerialNo  string        `json:"WechatCertSerialNo"`
+	Timeout             time.Duration `json:"Timeout"`
 }
 
 func NewOptions(v *viper.Viper) (o Options, err error) {
-	if err = v.UnmarshalKey("wxpay", &o); err != nil {
+	if err = v.UnmarshalKey("Wxpay", &o); err != nil {
 		return o, errorx.Wrap(err, "unmarshal wxpay option error")
 	}
 

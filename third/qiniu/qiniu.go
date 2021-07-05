@@ -9,14 +9,14 @@ import (
 )
 
 type Options struct {
-	AccessKey string `json:"access_key"`
-	SecretKey string `json:"secret_key"`
-	Scope     string `json:"scope"`
-	Expires   uint64 `json:"expires"`
+	AccessKey string `json:"AccessKey"`
+	SecretKey string `json:"SecretKey"`
+	Scope     string `json:"Scope"`
+	Expires   uint64 `json:"Expires"`
 }
 
 func NewOptions(v *viper.Viper) (o Options, err error) {
-	if err = v.UnmarshalKey("qiniu", &o); err != nil {
+	if err = v.UnmarshalKey("Qiniu", &o); err != nil {
 		return o, errorx.Wrap(err, "unmarshal qiniu option error")
 	}
 
