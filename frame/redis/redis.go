@@ -13,16 +13,16 @@ import (
 
 // Options
 type Options struct {
-	Addr        string
-	Password    string
-	DB          int
-	PoolSize    int
-	IdleTimeout time.Duration
+	Addr        string        `json:"Addr"`
+	Password    string        `json:"Password"`
+	DB          int           `json:"DB"`
+	PoolSize    int           `json:"PoolSize"`
+	IdleTimeout time.Duration `json:"IdleTimeout"`
 }
 
 // NewOptions
 func NewOptions(v *viper.Viper) (o Options, err error) {
-	if err = v.UnmarshalKey("redis", &o); err != nil {
+	if err = v.UnmarshalKey("Redis", &o); err != nil {
 		return o, errorx.Wrap(err, "unmarshal redis server option error")
 	}
 
