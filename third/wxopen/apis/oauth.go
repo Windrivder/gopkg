@@ -148,7 +148,7 @@ func GetUserInfo(p *wxopen.Platform, access_token, openid string) (*UserInfo, er
 		return nil, errorx.Wrap(err, "build url error")
 	}
 
-	logx.Infof("request get user info: %+v", u)
+	logx.Info().Msgf("request get user info: %+v", u)
 
 	resp, err := p.Client.Get(u, nil)
 	if err != nil {

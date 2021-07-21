@@ -1,41 +1,28 @@
 package logx
 
 import (
-	"sync"
+	"io"
+	"os"
 
 	"github.com/google/wire"
+	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
 	"github.com/windrivder/gopkg/errorx"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-// instance of Logger
-var (
-	once sync.Once
-	log  Logger
+var logger *zerolog.Logger
+
+type (
+	Level   = zerolog.Level
+	Logger  = zerolog.Logger
+	Context = zerolog.Context
+	Event   = zerolog.Event
 )
 
-// Fields Type to pass when we want to call WithFields for structured logging
-type Fields map[string]interface{}
-
-// Logger is our contract for the logger
-type Logger interface {
-	Debug(args ...interface{})
-	Info(args ...interface{})
-	Warn(args ...interface{})
-	Error(args ...interface{})
-	Fatal(args ...interface{})
-	Debugf(format string, args ...interface{})
-	Infof(format string, args ...interface{})
-	Warnf(format string, args ...interface{})
-	Errorf(format string, args ...interface{})
-	Fatalf(format string, args ...interface{})
-	Panicf(format string, args ...interface{})
-	WithFields(keyValues Fields) Logger
-}
-
-// Options is log configuration struct
 type Options struct {
-	Level      string `json:"Level"`
+	// 0Debug 1Info 2Warn 3Error 4Fatal 5Panic 6NoLevel 7Disabled 8Trace
+	Level      Level  `json:"Level"`
 	File       string `json:"File"`
 	MaxSize    int    `json:"MaxSize"` // MB
 	MaxAge     int    `json:"MaxAge"`  // Day
@@ -51,62 +38,26 @@ func NewOptions(v *viper.Viper) (o Options, err error) {
 	return o, err
 }
 
-func New(o Options) (Logger, error) {
-	if log == nil {
-		once.Do(func() {
-			newZapLogger(o)
-		})
-	}
+func New(o Options) (*Logger, error) {
+	logger = func() *Logger {
+		writers := []io.Writer{zerolog.ConsoleWriter{Out: os.Stderr}}
 
-	return log, nil
-}
+		if o.File != "" {
+			writers = append(writers, &lumberjack.Logger{
+				Filename:   o.File,
+				MaxSize:    o.MaxSize,
+				MaxAge:     o.MaxAge,
+				MaxBackups: o.MaxBackups,
+				Compress:   o.Compress,
+			})
+		}
 
-func Debug(args ...interface{}) {
-	log.Debug(args...)
-}
+		log := zerolog.New(io.MultiWriter(writers...)).With().Timestamp().Logger()
+		zerolog.SetGlobalLevel(o.Level)
+		return &log
+	}()
 
-func Info(args ...interface{}) {
-	log.Info(args...)
-}
-
-func Warn(args ...interface{}) {
-	log.Warn(args...)
-}
-
-func Error(args ...interface{}) {
-	log.Error(args...)
-}
-
-func Fatal(args ...interface{}) {
-	log.Fatal(args...)
-}
-
-func Debugf(format string, args ...interface{}) {
-	log.Debugf(format, args...)
-}
-
-func Infof(format string, args ...interface{}) {
-	log.Infof(format, args...)
-}
-
-func Warnf(format string, args ...interface{}) {
-	log.Warnf(format, args...)
-}
-
-func Errorf(format string, args ...interface{}) {
-	log.Errorf(format, args...)
-}
-
-func Fatalf(format string, args ...interface{}) {
-	log.Fatalf(format, args...)
-}
-
-func Panicf(format string, args ...interface{}) {
-	log.Panicf(format, args...)
-}
-
-func WithFields(keyValues Fields) Logger {
-	return log.WithFields(keyValues)
+	return logger, nil
 }
 
 var ProviderSet = wire.NewSet(New, NewOptions)

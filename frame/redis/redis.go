@@ -41,19 +41,20 @@ func New(o Options) (client *redis.Client, cleanFunc func(), err error) {
 	cleanFunc = func() {
 		err := client.Close()
 		if err != nil {
-			logx.Fatalf("redis close error: %v", err)
+			logx.Fatal().Msgf("redis close error: %v", err)
 		}
 	}
 
 	ping, err := client.Ping(context.Background()).Result()
 	if err != nil {
-		logx.Fatalf("redis close errors")
+		logx.Fatal().Msg("redis close errors")
 	}
 
-	logx.WithFields(logx.Fields{"ping": ping}).
-		WithFields(logx.Fields{"addr": o.Addr}).
-		WithFields(logx.Fields{"db": o.DB}).
-		Info("redis connected")
+	logx.Info().
+		Str("ping", ping).
+		Str("addr", o.Addr).
+		Int("db", o.DB).
+		Msg("redis connected")
 
 	return client, cleanFunc, nil
 }

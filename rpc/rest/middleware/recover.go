@@ -54,7 +54,7 @@ func RecoverWithConfig(config RecoverConfig) echo.MiddlewareFunc {
 					}
 					if !config.DisablePrintStack {
 						msg := fmt.Sprintf("[PANIC RECOVER] %+v\n", err)
-						logx.Error(msg)
+						logx.Error().Msg(msg)
 					}
 					c.Error(err)
 				}

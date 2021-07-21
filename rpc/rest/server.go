@@ -38,10 +38,10 @@ func NewOptions(v *viper.Viper) (o Options, err error) {
 type Server struct {
 	*echo.Echo
 	o   Options
-	log logx.Logger
+	log *logx.Logger
 }
 
-func New(o Options, log logx.Logger, fn HandlerRoutersFunc) (IServer, func(), error) {
+func New(o Options, log *logx.Logger, fn HandlerRoutersFunc) (IServer, func(), error) {
 	e := echo.New()
 
 	e.Use(middleware.Recover())
@@ -56,7 +56,7 @@ func New(o Options, log logx.Logger, fn HandlerRoutersFunc) (IServer, func(), er
 
 func (s *Server) Start() (err error) {
 	addr := fmt.Sprintf("%s:%d", s.o.Host, s.o.Port)
-	s.log.WithFields(logx.Fields{"addr": addr}).Info("http server starting...")
+	s.log.Info().Str("addr", addr).Msg("http server starting...")
 
 	go func() {
 		s.Echo.Server.Addr = addr
@@ -68,7 +68,7 @@ func (s *Server) Start() (err error) {
 		}
 
 		if err != nil && err != http.ErrServerClosed {
-			s.log.Fatalf("start http server err: %v", err)
+			s.log.Fatal().Msgf("start http server err: %v", err)
 		}
 	}()
 
@@ -76,7 +76,7 @@ func (s *Server) Start() (err error) {
 }
 
 func (s *Server) Stop() error {
-	s.log.Info("http server stopping...")
+	s.log.Info().Msg("http server stopping...")
 
 	timeout := time.Second * s.o.ShutdownTimeout
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)

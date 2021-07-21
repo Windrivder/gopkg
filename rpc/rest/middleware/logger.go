@@ -54,21 +54,21 @@ func LoggerWithConfig(config LoggerConfig) echo.MiddlewareFunc {
 				path = "/"
 			}
 
-			stop := time.Now()
-			fields := logx.Fields{
-				"id":        id,
-				"path":      path,
-				"remote_ip": c.RealIP(),
-				"uri":       req.RequestURI,
-				"method":    req.Method,
-				"status":    res.Status,
-				"latency":   stop.Sub(start).String(),
-			}
+			var log *logx.Event
 			if err != nil {
-				logx.WithFields(fields).Error(err)
+				log = logx.Err(err)
 			} else {
-				logx.WithFields(fields).Info("ok")
+				log = logx.Info()
 			}
+
+			stop := time.Now()
+			log.Str("id", id).
+				Str("path", path).
+				Str("remote_ip", c.RealIP()).
+				Str("uri", req.RequestURI).
+				Str("method", req.Method).
+				Int("status", res.Status).
+				Str("latency", stop.Sub(start).String()).Send()
 
 			return nil
 		}

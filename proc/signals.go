@@ -15,6 +15,6 @@ func AwaitSignal() {
 
 	select {
 	case s := <-c:
-		logx.WithFields(logx.Fields{"signal": s.String()}).Info("receive a signal")
+		logx.Info().Str("signal", s.String()).Msg("receive a signal")
 	}
 }

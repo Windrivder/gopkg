@@ -1,6 +1,10 @@
 package sysx
 
-import "os"
+import (
+	"os"
+
+	"github.com/windrivder/gopkg/util/randx"
+)
 
 var hostname string
 
@@ -8,7 +12,7 @@ func init() {
 	var err error
 	hostname, err = os.Hostname()
 	if err != nil {
-		hostname = stringx.RandId()
+		hostname = randx.Letters(8)
 	}
 }
 
