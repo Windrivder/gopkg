@@ -14,6 +14,7 @@ require (
 	github.com/labstack/echo/v4 v4.3.0
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/qiniu/go-sdk/v7 v7.9.7
+	github.com/qiniu/qmgo v0.9.4
 	github.com/rs/zerolog v1.23.0
 	github.com/spf13/afero v1.6.0
 	github.com/spf13/viper v1.8.1
