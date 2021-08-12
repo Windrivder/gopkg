@@ -13,6 +13,7 @@ require (
 	github.com/json-iterator/go v1.1.11
 	github.com/labstack/echo/v4 v4.3.0
 	github.com/labstack/gommon v0.3.0 // indirect
+	github.com/olebedev/emitter v0.0.0-20190110104742-e8d1457e6aee
 	github.com/qiniu/go-sdk/v7 v7.9.7
 	github.com/qiniu/qmgo v0.9.4
 	github.com/rs/zerolog v1.23.0
