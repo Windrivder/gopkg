@@ -52,6 +52,11 @@ func New(o Options) (client *qmgo.Client, cleanFunc func(), err error) {
 		return nil, nil, err
 	}
 
+	logx.Info().Str("host", o.Host).
+		Str("username", o.Username).
+		Str("database", o.Database).
+		Msg("mongodb connected")
+
 	cleanFunc = func() {
 		if err := client.Close(context.Background()); err != nil {
 			logx.Error().Msgf("close mongodb client: %+v", err)
