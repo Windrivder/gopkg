@@ -46,6 +46,7 @@ func New(o Options, log *logx.Logger, fn HandlerRoutersFunc) (IServer, func(), e
 
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
+	e.Binder = NewBinder()
 
 	s := &Server{o: o, log: log, Echo: e}
 
@@ -83,6 +84,10 @@ func (s *Server) Stop() error {
 	defer cancel()
 
 	return s.Echo.Shutdown(ctx)
+}
+
+func (s *Server) ErrorHandler(eh HTTPErrorHandler) {
+	s.Echo.HTTPErrorHandler = eh
 }
 
 var ProviderSet = wire.NewSet(New, NewOptions)

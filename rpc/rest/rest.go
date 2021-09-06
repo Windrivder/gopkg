@@ -37,6 +37,7 @@ type IServer interface {
 	URL(h HandlerFunc, params ...interface{}) string
 	Reverse(name string, params ...interface{}) string
 	Routes() []*Route
+	ErrorHandler(h HTTPErrorHandler)
 	Start() error
 	Stop() error
 }

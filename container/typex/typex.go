@@ -10,4 +10,6 @@ type (
 	PlaceholderType = struct{}
 	// DictType represents a container type.
 	DictType = map[string]interface{}
+	// DictStrs represents a {str:str} type.
+	DictStrs = map[string]string
 )
