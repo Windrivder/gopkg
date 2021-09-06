@@ -8,6 +8,7 @@ type (
 	Group              = echo.Group
 	MiddlewareFunc     = echo.MiddlewareFunc
 	HandlerFunc        = echo.HandlerFunc
+	HTTPErrorHandler   = echo.HTTPErrorHandler
 	HandlerRoutersFunc func(IServer)
 )
 
