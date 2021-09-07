@@ -3,6 +3,7 @@ package middleware
 import (
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/windrivder/gopkg/logx"
 )
@@ -56,7 +57,12 @@ func LoggerWithConfig(config LoggerConfig) echo.MiddlewareFunc {
 
 			var log *logx.Event
 			if err != nil {
-				log = logx.Err(err)
+				rerr, ok := err.(validator.ValidationErrors)
+				if ok {
+					log = logx.Err(rerr)
+				} else {
+					log = logx.Err(err)
+				}
 			} else {
 				log = logx.Info()
 			}

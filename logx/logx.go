@@ -52,7 +52,7 @@ func New(o Options) (*Logger, error) {
 			})
 		}
 
-		log := zerolog.New(io.MultiWriter(writers...)).With().Timestamp().Logger()
+		log := zerolog.New(io.MultiWriter(writers...)).With().Caller().Timestamp().Logger()
 		zerolog.SetGlobalLevel(o.Level)
 		return &log
 	}()
