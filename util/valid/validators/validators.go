@@ -1,4 +1,4 @@
-package valid
+package validators
 
 import "regexp"
 
@@ -23,4 +23,8 @@ var (
 	// 6. 2018:
 	//    16x, 19x
 	RegMobile = regexp.MustCompile(`^13[\d]{9}$|^14[5,7]{1}\d{8}$|^15[^4]{1}\d{8}$|^16[\d]{9}$|^17[0,2,3,5,6,7,8]{1}\d{8}$|^18[\d]{9}$|^19[\d]{9}$`)
+
+	RegPassword = regexp.MustCompile(`^[a-z0-9A-Z\p{Han}]+(_[a-z0-9A-Z\p{Han}]+)*$`)
+
+	RegUsername = regexp.MustCompile(`^[a-zA-Z][a-z0-9A-Z]*(_[a-z0-9A-Z]+)*$`)
 )

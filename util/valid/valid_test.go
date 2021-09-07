@@ -14,15 +14,18 @@ func TestValid(t *testing.T) {
 		Mobile string `json:"Mobile" validate:"required,mobile"`
 	}
 
-	err := ValidateStruct(User{Name: "test", Age: 9, Mobile: "1552806970"})
-	if err != nil {
+	if err := RegisterValidation(validators.Mobile()); err != nil {
+		t.Fatal(err)
+	}
+
+	user := User{Name: "validUser", Age: 9, Mobile: "1882222444"}
+	if err := ValidateStruct(user); err != nil {
 		rerr := err.(validator.ValidationErrors)
 
 		m := map[string]string{}
 		for field, errStr := range rerr.Translate(translator) {
 			m[field[strings.Index(field, ".")+1:]] = errStr
 		}
-
 		t.Log(m)
 	}
 }

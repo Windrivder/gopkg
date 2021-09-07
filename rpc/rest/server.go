@@ -25,6 +25,7 @@ type Options struct {
 	ClientTimeout   time.Duration `json:"ClientTimeout"`
 	Secret          string        `json:"Secret"`
 	Expired         time.Duration `json:"Expired"`
+	Locale          string        `json:"Locale"`
 }
 
 func NewOptions(v *viper.Viper) (o Options, err error) {
@@ -46,7 +47,12 @@ func New(o Options, log *logx.Logger, fn HandlerRoutersFunc) (IServer, func(), e
 
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
-	e.Binder = NewBinder()
+
+	binder, err := NewBinder(o.Locale)
+	if err != nil {
+		return nil, nil, err
+	}
+	e.Binder = binder
 
 	s := &Server{o: o, log: log, Echo: e}
 

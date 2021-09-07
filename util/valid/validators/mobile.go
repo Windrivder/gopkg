@@ -1,13 +1,14 @@
-package valid
+package validators
 
 import (
 	"github.com/windrivder/gopkg/container/typex"
 	"github.com/windrivder/gopkg/errorx"
+	"github.com/windrivder/gopkg/util/valid"
 )
 
 type mobile struct{}
 
-func Mobile() Validator {
+func Mobile() valid.Validator {
 	return &mobile{}
 }
 
@@ -30,5 +31,9 @@ func (m *mobile) Validate(i interface{}) error {
 		}
 	}
 
-	return errorx.New("must be a mobile")
+	return errorx.New("must be a mobile format")
+}
+
+func MobileValidate(mobile string) error {
+	return Mobile().Validate(mobile)
 }
