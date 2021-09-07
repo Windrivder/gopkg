@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/google/wire"
 	"github.com/labstack/echo/v4"
 	"github.com/spf13/viper"
 	"github.com/windrivder/gopkg/errorx"
@@ -25,7 +24,6 @@ type Options struct {
 	ClientTimeout   time.Duration `json:"ClientTimeout"`
 	Secret          string        `json:"Secret"`
 	Expired         time.Duration `json:"Expired"`
-	Locale          string        `json:"Locale"`
 }
 
 func NewOptions(v *viper.Viper) (o Options, err error) {
@@ -37,45 +35,48 @@ func NewOptions(v *viper.Viper) (o Options, err error) {
 }
 
 type Server struct {
-	*echo.Echo
-	o   Options
-	log *logx.Logger
+	e *echo.Echo
+	o Options
 }
 
-func New(o Options, log *logx.Logger, fn HandlerRoutersFunc) (IServer, func(), error) {
+func NewServer(o Options, rs Routers) (*Server, func(), error) {
 	e := echo.New()
 
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 
-	binder, err := NewBinder(o.Locale)
-	if err != nil {
-		return nil, nil, err
+	for _, r := range rs {
+		e.Add(r.Method, r.Path, r.Handler, r.Middlewares...)
 	}
-	e.Binder = binder
 
-	s := &Server{o: o, log: log, Echo: e}
-
-	fn(s)
+	s := &Server{o: o, e: e}
 
 	return s, func() { s.Stop() }, nil
 }
 
+func (s *Server) Binder(b echo.Binder) {
+	s.e.Binder = b
+}
+
+func (s *Server) ErrorHandler(eh HTTPErrorHandler) {
+	s.e.HTTPErrorHandler = eh
+}
+
 func (s *Server) Start() (err error) {
 	addr := fmt.Sprintf("%s:%d", s.o.Host, s.o.Port)
-	s.log.Info().Str("addr", addr).Msg("http server starting...")
+	logx.Info().Str("addr", addr).Msg("http server starting...")
 
 	go func() {
-		s.Echo.Server.Addr = addr
+		s.e.Server.Addr = addr
 
 		if s.o.CertFile == "" && s.o.KeyFile == "" {
-			err = s.Echo.Server.ListenAndServe()
+			err = s.e.Server.ListenAndServe()
 		} else {
-			err = s.Echo.Server.ListenAndServeTLS(s.o.CertFile, s.o.KeyFile)
+			err = s.e.Server.ListenAndServeTLS(s.o.CertFile, s.o.KeyFile)
 		}
 
 		if err != nil && err != http.ErrServerClosed {
-			s.log.Fatal().Msgf("start http server err: %v", err)
+			logx.Fatal().Msgf("start http server err: %v", err)
 		}
 	}()
 
@@ -83,17 +84,11 @@ func (s *Server) Start() (err error) {
 }
 
 func (s *Server) Stop() error {
-	s.log.Info().Msg("http server stopping...")
+	logx.Info().Msg("http server stopping...")
 
 	timeout := time.Second * s.o.ShutdownTimeout
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
-	return s.Echo.Shutdown(ctx)
+	return s.e.Shutdown(ctx)
 }
-
-func (s *Server) ErrorHandler(eh HTTPErrorHandler) {
-	s.Echo.HTTPErrorHandler = eh
-}
-
-var ProviderSet = wire.NewSet(New, NewOptions)

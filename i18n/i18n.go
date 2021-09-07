@@ -8,25 +8,25 @@ import (
 
 var errUnmarshalNilLocate = errorx.New("can't unmarshal a nil *Locate")
 
-type Locate int
+type Locale int
 
 const (
-	LocateEN Locate = iota
-	LocateZH
+	LocaleEN Locale = iota
+	LocaleZH
 )
 
 var (
 	locates = [...]string{
-		LocateEN: "en",
-		LocateZH: "zh",
+		LocaleEN: "en",
+		LocaleZH: "zh",
 	}
 )
 
-func (l Locate) Int() int {
+func (l Locale) Int() int {
 	return int(l)
 }
 
-func (l Locate) String() string {
+func (l Locale) String() string {
 	index := l.Int()
 	if 0 <= index && index <= len(locates)-1 {
 		return locates[l]
@@ -35,24 +35,24 @@ func (l Locate) String() string {
 	return ""
 }
 
-func (l Locate) CapitalString() string {
+func (l Locale) CapitalString() string {
 	return strings.ToUpper(l.String())
 }
 
-func (l Locate) MarshalText() ([]byte, error) {
+func (l Locale) MarshalText() ([]byte, error) {
 	return []byte(l.String()), nil
 }
 
-func (l *Locate) UnmarshalText(text []byte) error {
+func (l *Locale) UnmarshalText(text []byte) error {
 	if l == nil {
 		return errUnmarshalNilLocate
 	}
 
 	switch string(text) {
-	case LocateEN.String(), LocateEN.CapitalString():
-		*l = LocateEN
-	case LocateZH.String(), LocateZH.CapitalString():
-		*l = LocateZH
+	case LocaleEN.String(), LocaleEN.CapitalString():
+		*l = LocaleEN
+	case LocaleZH.String(), LocaleZH.CapitalString():
+		*l = LocaleZH
 	default:
 		return errorx.Newf("unrecognized locate: %q", text)
 	}
@@ -61,11 +61,11 @@ func (l *Locate) UnmarshalText(text []byte) error {
 }
 
 // Set sets the locate for the flag.Value interface.
-func (l *Locate) Set(s string) error {
+func (l *Locale) Set(s string) error {
 	return l.UnmarshalText([]byte(s))
 }
 
 // Get gets the locate for the flag.Getter interface.
-func (l *Locate) Get() interface{} {
+func (l *Locale) Get() interface{} {
 	return *l
 }

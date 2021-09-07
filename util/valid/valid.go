@@ -1,14 +1,14 @@
 package valid
 
 import (
+	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
-	"github.com/windrivder/gopkg/container/typex"
 )
 
 type (
 	Validator interface {
 		Name() string
-		Trans() typex.DictStrs
+		Trans(locale string) string
 		Validate(i interface{}) error
 	}
 
@@ -16,32 +16,41 @@ type (
 )
 
 var (
-	v = validator.New()
+	v *validator.Validate
 )
 
-func GetValidate() *validator.Validate {
+func NewValidor() *validator.Validate {
+	v = validator.New()
 	return v
 }
 
 func ValidateStruct(i interface{}) error {
+	if v == nil {
+		v = NewValidor()
+	}
+
 	return v.Struct(i)
 }
 
 func ValidateVar(field interface{}, tag string) error {
+	if v == nil {
+		v = NewValidor()
+	}
+
 	return v.Var(field, tag)
 }
 
-func RegisterValidation(validators ...Validator) (err error) {
+func RegisterValidation(locale string, trans ut.Translator, validators ...Validator) (err error) {
 	for _, validator := range validators {
 		tag := validator.Name()
-		msg := validator.Trans()[defaultLocale]
+		msg := validator.Trans(locale)
 
 		if err = v.RegisterValidation(tag,
 			wrapValidateFunc(validator.Validate), true); err != nil {
 			return err
 		}
 
-		if err = RegisterTranslation(tag, msg); err != nil {
+		if err = RegisterTranslation(tag, msg, trans); err != nil {
 			return err
 		}
 	}

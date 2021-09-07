@@ -11,58 +11,47 @@ import (
 	"github.com/windrivder/gopkg/i18n"
 )
 
-var (
-	defaultLocale = i18n.LocateZH.String()
-	translator, _ = NewTranslator(defaultLocale)
-)
-
-func NewTranslator(locale string) (trans ut.Translator, err error) {
+func NewTranslator(o i18n.Options) (trans ut.Translator, err error) {
 	en := en.New()
 	zh := zh.New()
 
 	uni := ut.New(en, en, zh)
-	translator, ok := uni.GetTranslator(locale)
+	trans, ok := uni.GetTranslator(o.Locale)
 	if !ok {
 		return nil, errorx.New("validator get translator fail")
 	}
 
-	switch locale {
+	switch o.Locale {
 
-	case i18n.LocateEN.String():
-		defaultLocale = locale
-		err = en_translations.RegisterDefaultTranslations(v, translator)
+	case i18n.LocaleEN.String():
+		err = en_translations.RegisterDefaultTranslations(v, trans)
 
-	case i18n.LocateZH.String():
-		defaultLocale = locale
-		err = zh_translations.RegisterDefaultTranslations(v, translator)
+	case i18n.LocaleZH.String():
+		err = zh_translations.RegisterDefaultTranslations(v, trans)
 
 	default:
-		err = zh_translations.RegisterDefaultTranslations(v, translator)
+		err = zh_translations.RegisterDefaultTranslations(v, trans)
 	}
 
 	if err != nil {
 		return nil, err
 	}
 
-	return translator, nil
+	return trans, nil
 }
 
-func GetTranslator() ut.Translator {
-	return translator
-}
+func RegisterTranslation(tag string, msg string, trans ut.Translator) error {
+	return v.RegisterTranslation(tag, trans,
 
-func RegisterTranslation(tag string, msg string) error {
-	return v.RegisterTranslation(tag, translator,
-
-		func(trans ut.Translator) error {
-			if err := trans.Add(tag, msg, true); err != nil {
+		func(translator ut.Translator) error {
+			if err := translator.Add(tag, msg, true); err != nil {
 				return err
 			}
 			return nil
 		},
 
-		func(ut ut.Translator, fe validator.FieldError) string {
-			message, _ := translator.T(tag, fe.Field())
+		func(translator ut.Translator, fe validator.FieldError) string {
+			message, _ := trans.T(tag, fe.Field())
 			return message
 		},
 	)
