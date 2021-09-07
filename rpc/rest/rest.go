@@ -9,6 +9,7 @@ type (
 	MiddlewareFunc   = echo.MiddlewareFunc
 	HandlerFunc      = echo.HandlerFunc
 	HTTPErrorHandler = echo.HTTPErrorHandler
+	Binder           = echo.Binder
 
 	Router struct {
 		Path        string
@@ -22,4 +23,4 @@ type (
 	Routers []Router
 )
 
-var ProviderSet = wire.NewSet(NewServer, NewClient, NewOptions)
+var ProviderSet = wire.NewSet(NewServer, NewClient, NewOptions, NewBinder)

@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/windrivder/gopkg/i18n"
 	"github.com/windrivder/gopkg/logx"
 	"github.com/windrivder/gopkg/util/valid"
 )
@@ -34,6 +35,9 @@ func LoggerWithConfig(config LoggerConfig) echo.MiddlewareFunc {
 	if config.Skipper == nil {
 		config.Skipper = DefaultLoggerConfig.Skipper
 	}
+
+	trans, _ := valid.NewTranslator(i18n.Options{Locale: "en"})
+
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) (err error) {
 			if config.Skipper(c) {
@@ -63,7 +67,7 @@ func LoggerWithConfig(config LoggerConfig) echo.MiddlewareFunc {
 				rerr, ok := err.(validator.ValidationErrors)
 				if ok {
 					log = logx.Error()
-					for field, msg := range rerr.Translate(valid.GetTranslator()) {
+					for field, msg := range rerr.Translate(trans) {
 						log = log.Str(field[strings.Index(field, ".")+1:], msg)
 					}
 				} else {

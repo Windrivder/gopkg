@@ -9,7 +9,7 @@ type binder struct {
 	*echo.DefaultBinder
 }
 
-func NewBinder() (echo.Binder, error) {
+func NewBinder() (Binder, error) {
 	return &binder{DefaultBinder: &echo.DefaultBinder{}}, nil
 }
 
