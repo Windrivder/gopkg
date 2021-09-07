@@ -1,11 +1,13 @@
 package middleware
 
 import (
+	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/windrivder/gopkg/logx"
+	"github.com/windrivder/gopkg/util/valid"
 )
 
 type (
@@ -57,9 +59,13 @@ func LoggerWithConfig(config LoggerConfig) echo.MiddlewareFunc {
 
 			var log *logx.Event
 			if err != nil {
+				// 打印请求校验信息
 				rerr, ok := err.(validator.ValidationErrors)
 				if ok {
-					log = logx.Err(rerr)
+					log = logx.Error()
+					for field, msg := range rerr.Translate(valid.GetTranslator()) {
+						log = log.Str(field[strings.Index(field, ".")+1:], msg)
+					}
 				} else {
 					log = logx.Err(err)
 				}
