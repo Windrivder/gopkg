@@ -19,8 +19,8 @@ func (p *password) Name() string {
 
 func (p *password) Trans() typex.DictStrs {
 	return typex.DictStrs{
-		"en": "{0} only contain digits, letters, special characters",
-		"zh": "{0} 只能包含数字、字母、特殊字符",
+		"en": "{0} length 4 to 32, contain digits, letters, special characters",
+		"zh": "{0} 长度在 4 到 32 位，包含数字、字母、特殊字符",
 	}
 }
 
