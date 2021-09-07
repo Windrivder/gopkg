@@ -33,6 +33,7 @@ func New(o Options) (client *qmgo.Client, cleanFunc func(), err error) {
 		Scheme: "mongodb",
 		Host:   o.Host,
 		User:   url.UserPassword(o.Username, o.Password),
+		Path:   o.Database,
 	}
 
 	config := &qmgo.Config{
