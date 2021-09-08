@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/viper"
 	"github.com/windrivder/gopkg/errorx"
 	"github.com/windrivder/gopkg/logx"
+	"github.com/windrivder/gopkg/rpc/rest/middleware"
 )
 
 type Options struct {
