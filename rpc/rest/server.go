@@ -54,12 +54,8 @@ func NewServer(o Options, rs Routers) (*Server, func(), error) {
 	return s, func() { s.Stop() }, nil
 }
 
-func (s *Server) Binder(b echo.Binder) {
-	s.e.Binder = b
-}
-
-func (s *Server) ErrorHandler(eh HTTPErrorHandler) {
-	s.e.HTTPErrorHandler = eh
+func (s *Server) Engine() *echo.Echo {
+	return s.e
 }
 
 func (s *Server) Start() (err error) {

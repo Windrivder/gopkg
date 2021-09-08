@@ -6,17 +6,21 @@ import (
 )
 
 type binder struct {
-	*echo.DefaultBinder
+	defaultBinder *echo.DefaultBinder
+	validate      *valid.Validate
 }
 
-func NewBinder() (Binder, error) {
-	return &binder{DefaultBinder: &echo.DefaultBinder{}}, nil
+func NewBinder(v *valid.Validate) (Binder, error) {
+	return &binder{
+		defaultBinder: &echo.DefaultBinder{},
+		validate:      v,
+	}, nil
 }
 
 func (b *binder) Bind(i interface{}, c echo.Context) (err error) {
-	if err := b.DefaultBinder.Bind(i, c); err != nil {
+	if err := b.defaultBinder.Bind(i, c); err != nil {
 		return err
 	}
 
-	return valid.ValidateStruct(i)
+	return b.validate.ValidateStruct(i)
 }

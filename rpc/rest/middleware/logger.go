@@ -4,16 +4,16 @@ import (
 	"strings"
 	"time"
 
+	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
-	"github.com/windrivder/gopkg/i18n"
 	"github.com/windrivder/gopkg/logx"
-	"github.com/windrivder/gopkg/util/valid"
 )
 
 type (
 	LoggerConfig struct {
 		Skipper SkipperFunc
+		Trans   ut.Translator
 	}
 )
 
@@ -35,8 +35,6 @@ func LoggerWithConfig(config LoggerConfig) echo.MiddlewareFunc {
 	if config.Skipper == nil {
 		config.Skipper = DefaultLoggerConfig.Skipper
 	}
-
-	trans, _ := valid.NewTranslator(i18n.Options{Locale: "en"})
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) (err error) {
@@ -63,12 +61,17 @@ func LoggerWithConfig(config LoggerConfig) echo.MiddlewareFunc {
 
 			var log *logx.Event
 			if err != nil {
+				log = logx.Error()
+
 				// 打印请求校验信息
 				rerr, ok := err.(validator.ValidationErrors)
 				if ok {
-					log = logx.Error()
-					for field, msg := range rerr.Translate(trans) {
-						log = log.Str(field[strings.Index(field, ".")+1:], msg)
+					if config.Trans != nil {
+						for field, msg := range rerr.Translate(config.Trans) {
+							log = log.Str(field[strings.Index(field, ".")+1:], msg)
+						}
+					} else {
+						log = log.Err(rerr)
 					}
 				} else {
 					log = logx.Err(err)
