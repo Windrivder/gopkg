@@ -54,7 +54,7 @@ func (l *Locale) UnmarshalText(text []byte) error {
 	case LocaleZH.String(), LocaleZH.CapitalString():
 		*l = LocaleZH
 	default:
-		return errorx.Newf("unrecognized locate: %q", text)
+		return errorx.New("unrecognized locate: %q", text)
 	}
 
 	return nil
