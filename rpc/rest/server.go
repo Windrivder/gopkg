@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/viper"
 	"github.com/windrivder/gopkg/errorx"
 	"github.com/windrivder/gopkg/logx"
-	"github.com/windrivder/gopkg/rpc/rest/middleware"
 )
 
 type Options struct {
@@ -43,7 +43,6 @@ func NewServer(o Options, rs Routers) (*Server, func(), error) {
 	e := echo.New()
 
 	e.Use(middleware.Recover())
-	e.Use(middleware.Logger())
 
 	for _, r := range rs {
 		e.Add(r.Method, r.Path, r.Handler, r.Middlewares...)
