@@ -36,68 +36,35 @@ type apiNext interface {
 }
 
 // New creates and returns an error which is formatted from given text.
-func New(text string) error {
+func New(msgAndArgs ...interface{}) error {
 	return &Error{
 		stack: callers(),
-		text:  text,
-		code:  -1,
-	}
-}
-
-// Newf returns an error that formats as the given format and args.
-func Newf(format string, args ...interface{}) error {
-	return &Error{
-		stack: callers(),
-		text:  fmt.Sprintf(format, args...),
+		text:  messageFromMsgAndArgs(msgAndArgs...),
 		code:  -1,
 	}
 }
 
 // NewSkip creates and returns an error which is formatted from given text.
 // The parameter <skip> specifies the stack callers skipped amount.
-func NewSkip(skip int, text string) error {
+func NewSkip(skip int, msgAndArgs ...interface{}) error {
 	return &Error{
 		stack: callers(skip),
-		text:  text,
-		code:  -1,
-	}
-}
-
-// NewSkipf returns an error that formats as the given format and args.
-// The parameter <skip> specifies the stack callers skipped amount.
-func NewSkipf(skip int, format string, args ...interface{}) error {
-	return &Error{
-		stack: callers(skip),
-		text:  fmt.Sprintf(format, args...),
+		text:  messageFromMsgAndArgs(msgAndArgs...),
 		code:  -1,
 	}
 }
 
 // Wrap wraps error with text.
 // It returns nil if given err is nil.
-func Wrap(err error, text string) error {
+func Wrap(err error, msgAndArgs ...interface{}) error {
 	if err == nil {
 		return nil
 	}
-	return &Error{
-		error: err,
-		stack: callers(),
-		text:  text,
-		code:  Code(err),
-	}
-}
 
-// Wrapf returns an error annotating err with a stack trace
-// at the point Wrapf is called, and the format specifier.
-// It returns nil if given <err> is nil.
-func Wrapf(err error, format string, args ...interface{}) error {
-	if err == nil {
-		return nil
-	}
 	return &Error{
 		error: err,
 		stack: callers(),
-		text:  fmt.Sprintf(format, args...),
+		text:  messageFromMsgAndArgs(msgAndArgs...),
 		code:  Code(err),
 	}
 }
@@ -105,95 +72,48 @@ func Wrapf(err error, format string, args ...interface{}) error {
 // WrapSkip wraps error with text.
 // It returns nil if given err is nil.
 // The parameter <skip> specifies the stack callers skipped amount.
-func WrapSkip(skip int, err error, text string) error {
+func WrapSkip(skip int, err error, msgAndArgs ...interface{}) error {
 	if err == nil {
 		return nil
 	}
 	return &Error{
 		error: err,
 		stack: callers(skip),
-		text:  text,
-		code:  Code(err),
-	}
-}
-
-// WrapSkipf wraps error with text that is formatted with given format and args.
-// It returns nil if given err is nil.
-// The parameter <skip> specifies the stack callers skipped amount.
-func WrapSkipf(skip int, err error, format string, args ...interface{}) error {
-	if err == nil {
-		return nil
-	}
-	return &Error{
-		error: err,
-		stack: callers(skip),
-		text:  fmt.Sprintf(format, args...),
+		text:  messageFromMsgAndArgs(msgAndArgs...),
 		code:  Code(err),
 	}
 }
 
 // NewCode creates and returns an error that has error code and given text.
-func NewCode(code int, text string) error {
+func NewCode(code int, msgAndArgs ...interface{}) error {
 	return &Error{
 		stack: callers(),
-		text:  text,
-		code:  code,
-	}
-}
-
-// NewCodef returns an error that has error code and formats as the given format and args.
-func NewCodef(code int, format string, args ...interface{}) error {
-	return &Error{
-		stack: callers(),
-		text:  fmt.Sprintf(format, args...),
+		text:  messageFromMsgAndArgs(msgAndArgs...),
 		code:  code,
 	}
 }
 
 // NewCodeSkip creates and returns an error which has error code and is formatted from given text.
 // The parameter <skip> specifies the stack callers skipped amount.
-func NewCodeSkip(code, skip int, text string) error {
+func NewCodeSkip(code, skip int, msgAndArgs ...interface{}) error {
 	return &Error{
 		stack: callers(skip),
-		text:  text,
-		code:  code,
-	}
-}
-
-// NewCodeSkipf returns an error that has error code and formats as the given format and args.
-// The parameter <skip> specifies the stack callers skipped amount.
-func NewCodeSkipf(code, skip int, format string, args ...interface{}) error {
-	return &Error{
-		stack: callers(skip),
-		text:  fmt.Sprintf(format, args...),
+		text:  messageFromMsgAndArgs(msgAndArgs...),
 		code:  code,
 	}
 }
 
 // WrapCode wraps error with code and text.
 // It returns nil if given err is nil.
-func WrapCode(code int, err error, text string) error {
+func WrapCode(err error, code int, msgAndArgs ...interface{}) error {
 	if err == nil {
 		return nil
 	}
-	return &Error{
-		error: err,
-		stack: callers(),
-		text:  text,
-		code:  code,
-	}
-}
 
-// WrapCodef wraps error with code and format specifier.
-// It returns nil if given <err> is nil.
-func WrapCodef(code int, err error, format string, args ...interface{}) error {
-	if err == nil {
-		return nil
-	}
 	return &Error{
 		error: err,
 		stack: callers(),
-		text:  fmt.Sprintf(format, args...),
+		text:  messageFromMsgAndArgs(msgAndArgs...),
 		code:  code,
 	}
 }
@@ -201,29 +121,15 @@ func WrapCodef(code int, err error, format string, args ...interface{}) error {
 // WrapCodeSkip wraps error with code and text.
 // It returns nil if given err is nil.
 // The parameter <skip> specifies the stack callers skipped amount.
-func WrapCodeSkip(code, skip int, err error, text string) error {
+func WrapCodeSkip(err error, code, skip int, msgAndArgs ...interface{}) error {
 	if err == nil {
 		return nil
 	}
-	return &Error{
-		error: err,
-		stack: callers(skip),
-		text:  text,
-		code:  code,
-	}
-}
 
-// WrapCodeSkipf wraps error with code and text that is formatted with given format and args.
-// It returns nil if given err is nil.
-// The parameter <skip> specifies the stack callers skipped amount.
-func WrapCodeSkipf(code, skip int, err error, format string, args ...interface{}) error {
-	if err == nil {
-		return nil
-	}
 	return &Error{
 		error: err,
 		stack: callers(skip),
-		text:  fmt.Sprintf(format, args...),
+		text:  messageFromMsgAndArgs(msgAndArgs...),
 		code:  code,
 	}
 }
@@ -236,6 +142,7 @@ func Code(err error) int {
 			return e.Code()
 		}
 	}
+
 	return -1
 }
 
@@ -246,6 +153,7 @@ func Cause(err error) error {
 			return e.Cause()
 		}
 	}
+
 	return err
 }
 
@@ -255,9 +163,11 @@ func Stack(err error) string {
 	if err == nil {
 		return ""
 	}
+
 	if e, ok := err.(apiStack); ok {
 		return e.Stack()
 	}
+
 	return err.Error()
 }
 
@@ -267,9 +177,11 @@ func Current(err error) error {
 	if err == nil {
 		return nil
 	}
+
 	if e, ok := err.(apiCurrent); ok {
 		return e.Current()
 	}
+
 	return err
 }
 
@@ -279,9 +191,11 @@ func Next(err error) error {
 	if err == nil {
 		return nil
 	}
+
 	if e, ok := err.(apiNext); ok {
 		return e.Next()
 	}
+
 	return nil
 }
 
@@ -301,4 +215,25 @@ func As(err error, target interface{}) bool {
 // Otherwise, Unwrap returns nil.
 func Unwrap(err error) error {
 	return Next(err)
+}
+
+func messageFromMsgAndArgs(msgAndArgs ...interface{}) string {
+	if len(msgAndArgs) == 0 || msgAndArgs == nil {
+		return ""
+	}
+
+	if len(msgAndArgs) == 1 {
+		msg := msgAndArgs[0]
+		if msgAsStr, ok := msg.(string); ok {
+			return msgAsStr
+		}
+
+		return fmt.Sprintf("%+v", msg)
+	}
+
+	if len(msgAndArgs) > 1 {
+		return fmt.Sprintf(msgAndArgs[0].(string), msgAndArgs[1:]...)
+	}
+
+	return ""
 }
