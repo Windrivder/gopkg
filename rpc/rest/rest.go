@@ -19,6 +19,8 @@ type (
 		Handler     HandlerFunc
 		Middlewares []MiddlewareFunc
 		Method      string
+		Request     interface{}
+		Response    interface{}
 	}
 	Routers []Router
 )
